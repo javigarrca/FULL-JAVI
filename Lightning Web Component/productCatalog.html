@@ -1,0 +1,125 @@
+<template>
+    <!-- Si NO hay producto seleccionado, mostramos el catálogo -->
+    <template if:false={selectedProductFull}>
+        <lightning-card title="Catálogo de productos" icon-name="utility:cart">
+
+            <!-- Selector de lista de precios -->
+            <div class="slds-m-around_medium">
+                <fieldset class="slds-form-element">
+                    <legend class="slds-form-element__legend slds-form-element__label">
+                        Selecciona una lista de precios
+                    </legend>
+                    <div class="slds-form-element__control">
+                        <div class="slds-radio_button-group">
+                            <template for:each={pricebooks} for:item="pb">
+                                <span key={pb.value} class="slds-radio_button">
+                                    <input type="radio"
+                                           id={pb.value}
+                                           name="pricebookSelector"
+                                           value={pb.value}
+                                           checked={pb.checked}
+                                           onchange={handlePricebookChange} />
+                                    <label class="slds-radio_button__label" for={pb.value}>
+                                        <span class="slds-radio_faux">{pb.label}</span>
+                                    </label>
+                                </span>
+                            </template>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Catálogo de productos -->
+            <template if:true={products}>
+                <div class="slds-grid slds-wrap slds-gutters slds-p-around_medium">
+                    <template for:each={products} for:item="product">
+                        <div key={product.Id}
+                             class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_small">
+                            <div class="slds-card"
+                                 style="border: 1px solid #d8dde6; border-radius: 0.5rem; height: 100%;">
+                                <div class="slds-card__header slds-grid">
+                                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                        <div class="slds-media__body">
+                                            <h2 class="slds-card__header-title slds-truncate"
+                                                title={product.ProductName}>
+                                                {product.ProductName}
+                                            </h2>
+                                        </div>
+                                    </header>
+                                </div>
+                                <div class="slds-card__body slds-card__body_inner">
+                                    <!-- Aquí usamos ShortDescription (recortada en JS) -->
+                                    <p>{product.ShortDescription}</p>
+                                    <p><b>Precio:</b> {product.UnitPrice} €</p>
+                                </div>
+                                <footer class="slds-card__footer">
+                                    <lightning-button
+                                        label="Ver detalle"
+                                        variant="brand"
+                                        data-id={product.Id}
+                                        onclick={handleAddClick}>
+                                    </lightning-button>
+                                </footer>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Mensaje de error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+        </lightning-card>
+    </template>
+
+   <!-- Si hay producto seleccionado, mostramos solo su detalle completo -->
+    <template if:true={selectedProductFull}>
+        <div class="slds-p-around_large" style="border: 1px solid #d8dde6; border-radius: 0.5rem;">
+            <div class="slds-grid slds-wrap slds-align-start">
+                
+                <!-- Imagen a la izquierda -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-right_small slds-text-align_center">
+                    <img src="https://tpv.ufv.es/wp-content/uploads/2024/04/logo-ufv-para-tpv.png"
+                        alt={selectedProductFull.ProductName}
+                        style="max-width:100%; max-height:200px; border-radius:0.5rem;"/>
+                </div>
+
+                <!-- Información a la derecha -->
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-p-left_small">
+                    <h1 class="slds-text-heading_large slds-m-bottom_small">
+                        {selectedProductFull.ProductName}
+                    </h1>                    
+                    <p class="slds-m-bottom-small" style="font-size: 15px;"><b>Descripción:</b> {selectedProductFull.Description}</p>
+                    <br/>
+                    <p class="slds-m-bottom-small" style="font-size: 15px;"><b>Precio:</b> {selectedProductFull.UnitPrice} €</p>
+                    <!-- Botones -->
+                    <div class="slds-m-top_small">
+                        <lightning-button label="Volver al catálogo"
+                                        variant="neutral"
+                                        onclick={handleCloseDetail}>
+                        </lightning-button>
+                        <lightning-button label="Comprar"
+                                        variant="brand"
+                                        class="slds-m-left_small"
+                                        onclick={handleBuyClick}>
+                        </lightning-button>
+                    </div>
+                </div>
+
+            </div>
+            <template if:true={showPayment}>
+                <div class="slds-m-top_large slds-grid slds-grid_align-center">
+                    <c-om-recibos
+                        contact-id="003Tp00000GT9y0IAD"    
+                        opportunity-id="006Tp00000Cq9bPIAR" 
+                        type="Admission Test">                  
+                    </c-om-recibos>
+                </div>
+            </template>
+        </div>
+    </template>
+
+
+</template>
