@@ -47,8 +47,9 @@ public with sharing class ProductCatalogController {
      * @param quantity Cantidad del producto.
      * @return Id del OpportunityLineItem creado.
      */
+    // Falta por definir como añadir los productos...
     @AuraEnabled
-    public static Id addProductToOpportunity(Id oppId, Id pricebookEntryId, Decimal quantity) {
+    /*public static Id addProductToOpportunity(Id oppId, Id pricebookEntryId, Decimal quantity) {
         if (oppId == null || pricebookEntryId == null || quantity == null || quantity <= 0) {
             throw new AuraHandledException('Debe indicar Opportunity, producto y cantidad válidos.');
         }
@@ -70,5 +71,5 @@ public with sharing class ProductCatalogController {
         insert oli;
 
         return oli.Id;
-    }
+    }*/
 }
