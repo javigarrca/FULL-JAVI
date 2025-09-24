@@ -1,15 +1,17 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, track, wire, api } from 'lwc';
 import getActivePricebooks from '@salesforce/apex/ProductCatalogController.getActivePricebooks';
 import getProductsByPricebookId from '@salesforce/apex/ProductCatalogController.getProductsByPricebookId';
+import createOpportunityLineItem from '@salesforce/apex/ProductCatalogController.createOpportunityLineItem';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-
 export default class ProductCatalog extends LightningElement {
+    @api recordId = '006AY00000Tei85YAB'; // <-- Id de la Opportunity seteado para pruebas
     @track pricebooks = [];
     @track selectedPricebookId;
     @track products = [];
     @track error;
     @track showPayment = false; // por defecto, no se mostrará hasta que el usuario haga clic en "Comprar"
+    @track selectedProductFull = null;
 
     // Producto seleccionado para ver en detalle
     @track selectedProductFull = null;
@@ -34,13 +36,14 @@ export default class ProductCatalog extends LightningElement {
         getProductsByPricebookId({ pricebookId: this.selectedPricebookId })
             .then(data => {
                 this.products = data.map(p => ({
-                    Id: p.Id,
+                    //Id: p.Id,
+                    Id: p.Product2.Id,
                     ProductName: p.Product2.Name,
                     Description: p.Product2.Description || '',
                     // Recorte solo para la vista de catálogo
                     ShortDescription: p.Product2.Description 
-                        ? (p.Product2.Description.length > 200 
-                            ? p.Product2.Description.substring(0, 200) + '...' 
+                        ? (p.Product2.Description.length > 50 
+                            ? p.Product2.Description.substring(0, 50) + '...' 
                             : p.Product2.Description) 
                         : '',
                     UnitPrice: p.UnitPrice
@@ -81,7 +84,7 @@ export default class ProductCatalog extends LightningElement {
         });
         this.dispatchEvent(event);
     }*/
-   handleBuyClick() {
+   /*handleBuyClick() {
         // Mostrar toast verde indicando que el artículo se añadió correctamente
         this.dispatchEvent(
             new ShowToastEvent({
@@ -92,5 +95,34 @@ export default class ProductCatalog extends LightningElement {
             })
         );
         this.showPayment = true; // Mostrar la sección de pago
+    }*/
+
+   handleBuyClick() {
+        createOpportunityLineItem({
+            opportunityId: this.recordId,
+            productId: this.selectedProductFull.Id,
+            unitPrice: this.selectedProductFull.UnitPrice
+        })
+        .then(() => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Artículo añadido',
+                    message: `${this.selectedProductFull.ProductName} se ha añadido correctamente a la oportunidad.`,
+                    variant: 'success',
+                    mode: 'pester'
+                })
+            );
+            this.showPayment = true;
+        })
+        .catch(error => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: error.body?.message || error.message,
+                    variant: 'error',
+                    mode: 'sticky'
+                })
+            );
+        });
     }
 }
