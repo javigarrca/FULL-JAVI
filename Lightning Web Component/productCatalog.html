@@ -74,52 +74,52 @@
         </lightning-card>
     </template>
 
-   <!-- Si hay producto seleccionado, mostramos solo su detalle completo -->
+    <!-- Si hay producto seleccionado, mostramos solo su detalle completo -->
     <template if:true={selectedProductFull}>
-        <div class="slds-p-around_large" style="border: 1px solid #d8dde6; border-radius: 0.5rem;">
+        <lightning-card  class="slds-p-around_medium">
             <div class="slds-grid slds-wrap slds-align-start">
-                
+
                 <!-- Imagen a la izquierda -->
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-right_small slds-text-align_center">
                     <img src="https://tpv.ufv.es/wp-content/uploads/2024/04/logo-ufv-para-tpv.png"
-                        alt={selectedProductFull.ProductName}
-                        style="max-width:100%; max-height:200px; border-radius:0.5rem;"/>
+                         alt={selectedProductFull.ProductName}
+                         style="max-width:100%; max-height:200px; border-radius:0.5rem;"/>
                 </div>
 
                 <!-- Información a la derecha -->
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3 slds-p-left_small">
-                    <h1 class="slds-text-heading_large slds-m-bottom_small">
+                    <p class="slds-text-heading_large slds-m-bottom_small">
                         {selectedProductFull.ProductName}
-                    </h1>                    
+                    </p>
                     <p class="slds-m-bottom-small" style="font-size: 15px;"><b>Descripción:</b> {selectedProductFull.Description}</p>
-                    <br/>
                     <p class="slds-m-bottom-small" style="font-size: 15px;"><b>Precio:</b> {selectedProductFull.UnitPrice} €</p>
+
                     <!-- Botones -->
                     <div class="slds-m-top_small">
                         <lightning-button label="Volver al catálogo"
-                                        variant="neutral"
-                                        onclick={handleCloseDetail}>
+                                          variant="neutral"
+                                          onclick={handleCloseDetail}>
                         </lightning-button>
                         <lightning-button label="Comprar"
-                                        variant="brand"
-                                        class="slds-m-left_small"
-                                        onclick={handleBuyClick}>
+                                          variant="brand"
+                                          class="slds-m-left_small"
+                                          onclick={handleBuyClick}>
                         </lightning-button>
                     </div>
                 </div>
 
             </div>
+
+            <!-- Componente de pago -->
             <template if:true={showPayment}>
                 <div class="slds-m-top_large slds-grid slds-grid_align-center">
                     <c-om-recibos
-                        contact-id="003Tp00000GT9y0IAD"    
-                        opportunity-id="006Tp00000Cq9bPIAR" 
-                        type="Admission Test">                  
+                        contact-id="003Tp00000GT9y0IAD"
+                        opportunity-id="006Tp00000Cq9bPIAR"
+                        type="Admission Test">
                     </c-om-recibos>
                 </div>
             </template>
-        </div>
+        </lightning-card>
     </template>
-
-
 </template>
